@@ -2,6 +2,7 @@ package com.example.sql_conexion
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.room.Room
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun prueb(){
@@ -95,6 +98,23 @@ fun ScreenUser() {
         Text(
             text = dataUser.value, fontSize = 20.sp
         )
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    val lastId = dao.getMaxId()
+                    eliminarUsuario(lastId, dao)
+                    // Mostrar un Toast notificando la eliminación
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Usuario con ID $lastId eliminado", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        ) {
+            Text("Eliminar Usuario", fontSize = 16.sp)
+        }
+
+
+
     }
 }
 
@@ -136,3 +156,15 @@ suspend fun  AgregarUsuario(user: User, dao: UserDao): Unit{
     //}
 
 }
+
+// Eliminar un usuario
+suspend fun eliminarUsuario(userId : Long, dao: UserDao): Unit{
+    try{
+        dao.deleteByUserId(userId)
+    }
+    catch (e: Exception){
+        Log.e("User","Error: delete: ${e.message}")
+    }
+}
+
+

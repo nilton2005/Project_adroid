@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SQL_conexionTheme {
-                ScreenUser()
+                ScreenUserWithScaffold()
             }
         }
     }
